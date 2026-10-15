@@ -19,17 +19,16 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager
                 .beginTransaction()
                 .setReorderingAllowed(true)
-                .add(R.id.fragmentContainerView, DieFragment.newInstance(20))
-                //this is wasteful bc it's a new instance of the fragment
-//                .replace(R.id.fragmentContainerView, DieFragment())
+                .add(R.id.fragmentContainerView, DieFragment.newInstance(6))
+                .add(R.id.fragmentContainerView2, DieFragment.newInstance(6))
                 .commit()
 
             //no guarantee what happened to fragment, so use this
             findViewById<Button>(R.id.rollDiceButton).setOnClickListener {
                 (supportFragmentManager
-//                    .findFragmentById(R.id.fragmentContainerView)?.let {
-//                        (it as DieFragment).throwDie()
-//                    }
+                    .findFragmentById(R.id.fragmentContainerView2) as DieFragment).throwDie()
+
+                (supportFragmentManager
                     .findFragmentById(R.id.fragmentContainerView) as DieFragment).throwDie()
             }
         }

@@ -6,18 +6,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import kotlin.random.Random
 
 const val DIESIDE = "sidenumber"
 
 class DieFragment : Fragment() {
 
+    //val only has getter, not setter --> delegate
+    //lazy is function taking lambda
+    //get() invokes lambda, only once
+    //never accessed unless attached to parent activity - requireContext() is properly scoped
+    val  dieViewModel : DieViewModel by lazy {
+
+        //initiate to access ViewModel...provider is the activity
+        //this instead of Require Context = fragments have their own context/rolls are different
+        ViewModelProvider(this)[DieViewModel::class.java]
+    }
+
     val CURRENT_ROLL = "currentroll"
 
     lateinit var dieTextView: TextView
 
     var dieSides: Int = 6
-    var currentRoll: Int = 0
+//    var currentRoll: Int = 0
 
     //"arguments" is different bundle than savedInstanceState bundle.
     //same every time
@@ -29,11 +41,11 @@ class DieFragment : Fragment() {
             }
         }
 
-        savedInstanceState?.let {
-            it.getInt(CURRENT_ROLL).run {
-                currentRoll = this
-            }
-        }
+//        savedInstanceState?.let {
+//            it.getInt(CURRENT_ROLL).run {
+//                currentRoll = this
+//            }
+//        }
 
 
     }
@@ -50,26 +62,29 @@ class DieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (currentRoll == 0) {
-            throwDie()
-        } else {
-            dieTextView.text = currentRoll.toString()
+//        if (currentRoll == 0) {
+//            throwDie()
+//        } else {
+//            dieTextView.text = currentRoll.toString()
+//        }
+        dieViewModel.getRoll().observe(viewLifecycleOwner) { rollValue ->
+            dieTextView.text = rollValue.toString()
         }
+
         view.setOnClickListener {
             throwDie()
         }
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(CURRENT_ROLL, currentRoll)
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        outState.putInt(CURRENT_ROLL, currentRoll)
+//    }
 
     fun throwDie() {
-//        dieTextView.text = (Random.nextInt(dieSides)+1).toString()
-        currentRoll = (Random.nextInt(dieSides)+1)
-        dieTextView.text = currentRoll.toString()
+        dieViewModel.setRoll(Random.nextInt(dieSides)+1)
+//        dieTextView.text = currentRoll.toString()
     }
 
 
