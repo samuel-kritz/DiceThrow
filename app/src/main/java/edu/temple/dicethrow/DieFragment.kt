@@ -60,7 +60,9 @@ class DieFragment : Fragment() {
         }
 
         view.setOnClickListener {
-            throwDie()
+            if (requireActivity() is DieRollInterface) {
+                (requireActivity() as DieRollInterface).rollDice()
+            }
         }
     }
 
@@ -78,6 +80,11 @@ class DieFragment : Fragment() {
                 putInt(DIESIDE, dieSides)
             }
         }
+    }
+
+
+    interface DieRollInterface {
+        fun rollDice()
     }
 }
 
